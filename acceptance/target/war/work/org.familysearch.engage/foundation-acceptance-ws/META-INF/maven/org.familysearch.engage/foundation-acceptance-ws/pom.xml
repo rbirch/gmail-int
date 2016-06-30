@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>foundation-commons-parent</artifactId>
+        <groupId>org.familysearch.engage</groupId>
+        <version>1.1.b179</version>
+    </parent>
+
+    <artifactId>foundation-acceptance-ws</artifactId>
+    <packaging>war</packaging>
+    <name>ENGAGE-foundation-acceptance-ws</name>
+
+    <properties>
+        <cargo-maven2-plugin.version>1.4.4</cargo-maven2-plugin.version>
+        <foundation-acceptance.version>1.0-SNAPSHOT</foundation-acceptance.version>
+        <versions-maven-plugin.version>1.3.1.7</versions-maven-plugin.version>
+    </properties>
+
+
+    <build>
+        <finalName>foundation-acceptance-ws</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${versions-maven-plugin.version}</version>
+                    <!-- Rules for "mvn versions:update-properties" -->
+                    <configuration>
+                        <!-- Use mercury version rules instead of maven 2 default rules -->
+                        <rulesUri>
+                            https://mvn.fsglobal.net/content/repositories/unapproved/org/familysearch/maven/config/version-rule-set/1.0/version-rule-set-1.0.xml
+                        </rulesUri>
+                        <!-- Manually updated -->
+                        <!--<excludeProperties>-->
+                        <!--Include here any properties (e.g. "standards.version") that are manually updated separated by commas. -->
+                        <!--</excludeProperties>-->
+                        <!-- Automatically updated -->
+                        <properties>
+                            <property>
+                                <name>cargo-maven2-plugin.version</name>
+                                <version>[1.3.3,)</version>
+                            </property>
+                            <property>
+                                <name>foundation-acceptance.version</name>
+                                <version>[1.0-SNAPSHOT,)</version>
+                            </property>
+                            <property>
+                                <name>versions-maven-plugin.version</name>
+                                <version>[1.3.1.7,)</version>
+                            </property>
+                        </properties>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>${cargo-maven2-plugin.version}</version>
+                <configuration>
+                    <deployables>
+                        <deployable>
+                            <properties>
+                                <context>ROOT</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
+                    <container>
+                        <containerId>tomcat7x</containerId>
+                        <artifactInstaller>
+                            <groupId>org.apache.tomcat</groupId>
+                            <artifactId>apache-tomcat</artifactId>
+                            <version>7.0.32</version>
+                            <type>zip</type>
+                        </artifactInstaller>
+                        <timeout>1200000</timeout>
+                        <append>false</append>
+                    </container>
+                    <configuration>
+                        <properties>
+                            <!-- cargo.jvmargs on one line to prevent a bug where a property at the EOL with a CR/LF contains CR/LF in the arg value -->
+                            <cargo.jvmargs>-Xmx128m -Dspring.profiles.active=local -Dfile.encoding=utf-8</cargo.jvmargs>
+                            <cargo.logging>medium</cargo.logging>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                        </properties>
+                        <home>${project.build.directory}/tomcat7x</home>
+                    </configuration>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.familysearch.engage</groupId>
+            <artifactId>foundation-acceptance</artifactId>
+        </dependency>
+    </dependencies>
+</project>
